@@ -1,21 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Alert, Button, Text, View } from 'react-native';
+
+import { css } from './assets/css/Css'
+import { Home, Login, Tracking } from "./views";
 
 export default function App() {
+
+  const Stack = createStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              title: 'point',
+              headerStyle: { backgroundColor: '#2680eb' },
+              headerTintColor: '#fff',
+              headerTitleStyle: { fontWeight: 'bold', alignSelf: 'center' }
+            }}
+          />
+          <Stack.Screen name="Login" options={{ headerShown: false }} component={Login} />
+          <Stack.Screen name="Tracking" component={Tracking} />
+          {/*Stack.Screen name="RestrictedArea" component={RestrictedArea} />*/}
+        </Stack.Navigator>
+      </NavigationContainer>
       <StatusBar style="auto" />
-    </View>
+    </>
+
+
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
