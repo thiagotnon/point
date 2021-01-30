@@ -28,7 +28,7 @@ export default function App() {
           />
           <Stack.Screen name="Login" options={{ headerShown: false }} component={Login} />
           <Stack.Screen name="Tracking" component={Tracking} />
-          <Stack.Screen name="RestrictedArea" component={RestrictedArea} />
+          <Stack.Screen name="RestrictedArea" options={{ headerShown: false }} component={RestrictedArea} />
         </Stack.Navigator>
       </NavigationContainer>
       <StatusBar style="auto" />

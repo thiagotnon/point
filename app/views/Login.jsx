@@ -2,6 +2,9 @@ import React from 'react';
 import { KeyboardAvoidingView, Image, View, Text, Platform } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
+
+import config from '../config/config';
 
 import { css } from '../assets/css/Css';
 
@@ -9,11 +12,50 @@ export default function Login({ navigation }) {
   const [display, setDisplay] = React.useState('none');
   const [user, setUser] = React.useState(null);
   const [password, setPassword] = React.useState(null);
-  const [login, setLogin] = React.useState(null);
+  const [login, setLogin] = React.useState(false);
+
+  React.useEffect(() => {
+    verifyLogin();
+  }, [])
+
+  React.useEffect(() => {
+    if (login === true) biometric();
+  }, [login])
+
+  //verify if user has any login
+
+  async function verifyLogin() {
+    const userData = await AsyncStorage.getItem('userData');
+    const json = await JSON.parse(userData);
+    if (json != null) {
+      setUser(json.name);
+      setPassword(json.password);
+      setLogin(true);
+    }
+  }
+
+  //Biometry
+  async function biometric() {
+    const compatible = await LocalAuthentication.hasHardwareAsync();
+    if (compatible) {
+      const biometricRecords = await LocalAuthentication.isEnrolledAsync();
+      if (!biometricRecords) {
+        alert('Biometria não cadastrada')
+      } else {
+        const result = await LocalAuthentication.authenticateAsync();
+        if (result.success) {
+          sendForm();
+        } else {
+          setUser(null);
+          setPassword(null);
+        }
+      }
+    }
+  }
 
   //Send login form
   async function sendForm() {
-    const response = await fetch('http://192.168.1.188:3000/login', {
+    const response = await fetch(`${config.urlRoot}login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -24,7 +66,6 @@ export default function Login({ navigation }) {
         password: password
       })
     });
-
     const json = await response.json();
     if (json === 'error') {
       setDisplay('flex');
