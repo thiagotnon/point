@@ -70,6 +70,14 @@ app.post('/create', async (request, response) => {
   });
 });
 
+// take product data
+app.post('/searchProduct', async (request, response) => {
+  let data = await tracking.findOne({
+    include: [{ model: product }],
+    where: { code: request.body.code }
+  })
+  response.send(JSON.stringify(response))
+})
 
 const port = process.env.PORT || 3000;
 app.listen(port, (request, response) => {
